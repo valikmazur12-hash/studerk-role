@@ -1,0 +1,258 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Призначення Ролей</title>
+    <meta charset="UTF-8"> 
+    <link rel="stylesheet" href="{% static 'main/data_view.css' %}?v=1.1">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <h1>Призначення Ролей Користувачам</h1>
+                <nav class="main-nav">
+                    <ul>
+                        <li><a href="{% url 'role_assignment' %}">Призначення</a></li>
+                        <li><a href="{% url 'page_two' %}">Таблиці</a></li>
+                        <li><a href="{% url 'page_three' %}">Схема</a></li>
+                        <li><a href="{% url 'page_four' %}" class="active">Профіль</a></li> 
+                    </ul>
+                </nav>
+            </div>
+        </header>
+
+        <div class="main-form">
+            <h2>Дані користувача:</h2>
+            <label class="group-label">ПІБ (Прізвище, Ім'я, По батькові):</label>
+            <div class="input-row-container">
+                <div class="fio-inputs">
+                    <input type="text" id="prizvische" placeholder="Прізвище" oninput="handleInput(event)">
+                    <input type="text" id="name" placeholder="Ім'я" oninput="handleInput(event)">
+                    <input type="text" id="father_name" placeholder="По батькові" oninput="handleInput(event)">
+                </div>
+                <div class="position-group">
+                    <input type="text" id="position" placeholder="Посада" readonly>
+                </div>
+                <button class="add-button" onclick="addRole()">➕ Додати Роль</button>
+            </div>
+            <ul id="suggestions" class="autocomplete-dropdown"></ul>
+        </div>
+        
+        <div id="role-management-block" class="management-block" style="display: none;"> 
+            <h3>Поточні права доступу</h3>
+            <table class="roles-table">
+                <thead>
+                    <tr>
+                        <th style="width: 40%;">Додаток</th>
+                        <th style="width: 40%;">Роль</th>
+                        <th style="width: 20%;">Дія</th>
+                    </tr>
+                </thead>
+                <tbody id="user-roles-tbody"></tbody>
+            </table>
+        </div>
+        
+        <div id="role-selection-block" class="selection-form-block" style="display: none;">
+            <h3>Призначення нових прав доступу</h3>
+            <p>Користувач: <strong id="selected-user-info"></strong></p>
+            <div class="selection-controls-container">
+                <div class="selection-control-group">
+                    <label for="app-select">Додаток:</label>
+                    <select id="app-select" onchange="handleAppChange()">
+                        <option value="">Виберіть додаток</option>
+                    </select>
+                </div>
+                <div class="selection-control-group">
+                    <label for="group-select">Група:</label>
+                    <select id="group-select" onchange="handleGroupChange()" disabled>
+                        <option value="">Виберіть групу</option>
+                    </select>
+                </div>
+                <div class="selection-control-group">
+                    <label for="role-type-select">Тип призначення:</label>
+                    <select id="role-type-select" disabled>
+                        <option value="multiple">Додаткові ролі</option>
+                        <option value="single">Одинарна роль (замінює інші)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="role-list-container">
+                <h4>Доступні ролі:</h4>
+                <div id="available-roles-list" class="available-roles-list"></div>
+            </div>
+            <div class="action-buttons-group">
+                <button class="approve-button" onclick="approveNewRole()">✅ Одобрити</button>
+                <button class="cancel-button" onclick="cancelRoleSelection()">✖️ Скасувати</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const DATA_SOURCE = JSON.parse('{{ user_data_json | safe }}'); 
+        
+        const APP_DATA = [
+            { id_app: 101, app_name: 'ERP_Finance', app_disc: 'Система фінансового обліку' },
+            { id_app: 102, app_name: 'CRM_Sales', app_disc: 'Модуль управління продажами' },
+            { id_app: 103, app_name: 'HR_Portal', app_disc: 'Внутрішній портал управління персоналом' },
+        ];
+        
+        const GROUP_DATA = [
+            { id_group: 10, Name: 'Admin_Fin', id_app: 101, opption: 1, disc: 'Адміністратори Фінансів' },
+            { id_group: 20, Name: 'Sales_Users', id_app: 102, opption: 1, disc: 'Користувачі Продажів' },
+            { id_group: 30, Name: 'HR_Staff', id_app: 103, opption: 1, disc: 'Персонал HR' },
+        ];
+        
+        const ROLE_DATA = [
+            { id_role: 1001, Name: 'Fin_Full_Access', Discription: 'Повний доступ до фінансових операцій', id_group: 10 },
+            { id_role: 3001, Name: 'HR_Reader', Discription: 'Перегляд даних персоналу', id_group: 30 },
+        ];
+
+        const suggestionsContainer = document.getElementById('suggestions');
+        const prizvischeInput = document.getElementById('prizvische');
+        const nameInput = document.getElementById('name');
+        const fatherNameInput = document.getElementById('father_name');
+        const positionInput = document.getElementById('position');
+        const roleManagementBlock = document.getElementById('role-management-block');
+        const rolesTbody = document.getElementById('user-roles-tbody');
+        const roleSelectionBlock = document.getElementById('role-selection-block');
+        const appSelect = document.getElementById('app-select');
+        const groupSelect = document.getElementById('group-select');
+        const roleTypeSelect = document.getElementById('role-type-select');
+        const availableRolesList = document.getElementById('available-roles-list');
+        const selectedUserInfo = document.getElementById('selected-user-info');
+
+        let currentUserId = null;
+        let currentUserName = '';
+
+        function loadUserRoles(userId) {
+            rolesTbody.innerHTML = ''; 
+            roleSelectionBlock.style.display = 'none'; 
+            
+            // Тестові дані (замінити на AJAX запит до бази)
+            const dummyRoles = [
+                { id: 101, app: 'ERP - Фінанси', role: 'Редактор рахунків' },
+                { id: 102, app: 'HR-Портал', role: 'Читач' }
+            ];
+            
+            dummyRoles.forEach(role => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${role.app}</td>
+                    <td>${role.role}</td>
+                    <td><button class="delete-role-btn" onclick="deleteRole(${role.id}, '${role.role}', event)">Видалити</button></td>
+                `;
+                rolesTbody.appendChild(row);
+            });
+        }
+
+        // ВИПРАВЛЕНА ФУНКЦІЯ ВИДАЛЕННЯ
+        function deleteRole(roleId, roleName, event) {
+            if (!confirm(`Ви впевнені, що хочете видалити роль "${roleName}"?`)) {
+                return;
+            }
+
+            // Отримуємо рядок таблиці через об'єкт події event
+            const row = event.target.closest('tr');
+            if (row) {
+                row.style.opacity = '0.5';
+                // Тут можна додати fetch запрос до Django
+                setTimeout(() => {
+                    row.remove();
+                    alert(`Роль "${roleName}" видалено візуально. Налаштуйте Django view для видалення з БД.`);
+                }, 200);
+            }
+        }
+        
+        function handleInput(event) {
+            const prizvischeVal = prizvischeInput.value.toLowerCase();
+            const nameVal = nameInput.value.toLowerCase();
+            const fatherNameVal = fatherNameInput.value.toLowerCase();
+            
+            if (!prizvischeVal && !nameVal && !fatherNameVal) {
+                suggestionsContainer.innerHTML = '';
+                roleManagementBlock.style.display = 'none';
+                return;
+            }
+    
+            const filteredUsers = DATA_SOURCE.filter(user => 
+                user.Prizvische.toLowerCase().includes(prizvischeVal) &&
+                user.Name.toLowerCase().includes(nameVal) &&
+                user.Father_Name.toLowerCase().includes(fatherNameVal)
+            );
+    
+            suggestionsContainer.innerHTML = '';
+            filteredUsers.slice(0, 10).forEach(user => { 
+                const item = document.createElement('li');
+                item.textContent = `${user.Prizvische} ${user.Name} ${user.Father_Name} (${user.Position})`;
+                item.onclick = () => {
+                    prizvischeInput.value = user.Prizvische;
+                    nameInput.value = user.Name;
+                    fatherNameInput.value = user.Father_Name;
+                    positionInput.value = user.Position;
+                    currentUserId = user.id_user; 
+                    currentUserName = `${user.Prizvische} ${user.Name} ${user.Father_Name}`; 
+                    suggestionsContainer.innerHTML = ''; 
+                    roleManagementBlock.style.display = 'block'; 
+                    loadUserRoles(currentUserId);
+                };
+                suggestionsContainer.appendChild(item);
+            });
+        }
+
+        function addRole() {
+            if (!currentUserId) {
+                alert('Будь ласка, виберіть користувача зі списку підказок.');
+                return;
+            }
+            selectedUserInfo.textContent = currentUserName;
+            roleSelectionBlock.style.display = 'block';
+            renderAppSelection();
+        }
+
+        function renderAppSelection() {
+            appSelect.innerHTML = '<option value="">Виберіть додаток</option>';
+            const uniqueAppIds = [...new Set(GROUP_DATA.map(g => g.id_app))];
+            uniqueAppIds.forEach(id => {
+                const app = APP_DATA.find(a => a.id_app === id);
+                if (app) {
+                    const option = document.createElement('option');
+                    option.value = app.id_app;
+                    option.textContent = `${app.app_name}`;
+                    appSelect.appendChild(option);
+                }
+            });
+        }
+
+        function handleAppChange() {
+            const selectedAppId = parseInt(appSelect.value);
+            groupSelect.innerHTML = '<option value="">Виберіть групу</option>';
+            if (selectedAppId) {
+                GROUP_DATA.filter(g => g.id_app === selectedAppId).forEach(g => {
+                    const option = document.createElement('option');
+                    option.value = g.id_group;
+                    option.textContent = g.Name;
+                    groupSelect.appendChild(option);
+                });
+                groupSelect.disabled = false;
+            }
+        }
+
+        function handleGroupChange() {
+            const selectedGroupId = parseInt(groupSelect.value);
+            availableRolesList.innerHTML = '';
+            if (selectedGroupId) {
+                ROLE_DATA.filter(r => r.id_group === selectedGroupId).forEach(role => {
+                    const div = document.createElement('div');
+                    div.innerHTML = `<input type="checkbox" value="${role.id_role}"> ${role.Name}`;
+                    availableRolesList.appendChild(div);
+                });
+            }
+        }
+
+        function cancelRoleSelection() {
+            roleSelectionBlock.style.display = 'none';
+        }
+    </script>
+</body>
+</html>

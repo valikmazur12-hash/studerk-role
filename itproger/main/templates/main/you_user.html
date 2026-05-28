@@ -1,0 +1,161 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Запит Ролі</title>
+    <meta charset="UTF-8"> 
+    <link rel="stylesheet" href="{% static 'main/data_view.css' %}?v=1.1">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <h1>Призначення Ролей Користувачам</h1>
+                <nav class="main-nav">
+                    <ul>
+                        <li><a href="{% url 'role_assignment' %}">Призначення</a></li>
+                        <li><a href="{% url 'page_two' %}">Таблиці</a></li>
+                        <li><a href="{% url 'page_three' %}">Схема</a></li>
+                        <li><a href="{% url 'page_four' %}" class="active">Профіль</a></li> 
+                    </ul>
+                </nav>
+            </div>
+        </header>
+
+        <div class="main-form">
+            <h2>📝 Запит ролі від імені користувача</h2>
+
+            <div class="filters-container" style="border: none; padding: 0;">
+                <div class="filter-group" style="flex-grow: 1;">
+                    <label for="user-id-select">Виберіть користувача (ID):</label>
+                    
+                    <select id="user-id-select" onchange="loadUserInfo(this.value)">
+                        <option value="">-- Оберіть зі списку --</option>
+                        {% for user in all_users %}
+                        <option value="{{ user.id_user }}" 
+                                data-pib="{{ user.prizvische }} {{ user.name }} {{ user.father_name }}"
+                                data-pos="{{ user.id_pos__name_pos|default:'Не визначено' }}">
+                            ID: {{ user.id_user }} | {{ user.prizvische }} {{ user.name|slice:":1" }}.
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            
+                <button class="filter-button" onclick="requestRole()" style="background-color: #007bff; margin-left: 10px;">
+                    Запросити роль
+                </button>
+            </div>
+            
+            <hr>
+
+            <div id="user-info-block" class="management-block" style="display: none;">
+                <h3>Інформація про профіль: <span id="display-pib" style="color: #3f51b5;"></span></h3>
+                <p><strong>Посада:</strong> <span id="user-position"></span></p>
+                
+                <table class="roles-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 40%;">Додаток</th>
+                            <th style="width: 60%;">Поточні Ролі</th>
+                        </tr>
+                    </thead>
+                    <tbody id="user-roles-display">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div id="request-modal" class="selection-form-block" style="display: none; position: fixed; top: 15%; left: 50%; transform: translateX(-50%); width: 500px; z-index: 1000; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
+            <h3>Створення офіційного запиту</h3>
+            <p><strong>Від:</strong> <span id="request-user-pib"></span></p>
+            
+            <form id="role-request-form" onsubmit="event.preventDefault(); submitRoleRequest();">
+                <div class="filter-group" style="margin-bottom: 15px;">
+                    <label for="role-reason">Текст обґрунтування:</label>
+                    <textarea id="role-reason" name="role-reason" rows="6" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ccc;"></textarea>
+                </div>
+                
+                <div class="action-buttons-group">
+                    <button type="submit" class="approve-button">✅ Надіслати до ХАЕС</button>
+                    <button type="button" class="cancel-button" onclick="closeModal()">✖️ Скасувати</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script id="user-roles-data" type="application/json">
+        {{ user_roles_json|safe }}
+    </script>
+
+    <script>
+        // Завантажуємо дані ролей, підготовлені Django View
+        const USER_ROLES_MAP = JSON.parse(document.getElementById('user-roles-data').textContent);
+        
+        const userInfoBlock = document.getElementById('user-info-block');
+        const userPosition = document.getElementById('user-position');
+        const displayPib = document.getElementById('display-pib');
+        const userRolesDisplay = document.getElementById('user-roles-display');
+        const requestModal = document.getElementById('request-modal');
+        const requestUserPib = document.getElementById('request-user-pib');
+        const roleReasonArea = document.getElementById('role-reason');
+        const userIdSelect = document.getElementById('user-id-select');
+        
+        let currentUserId = null;
+
+        function loadUserInfo(userId) {
+            if (!userId) {
+                userInfoBlock.style.display = 'none';
+                currentUserId = null;
+                return;
+            }
+            
+            currentUserId = userId;
+            const selectedOption = userIdSelect.options[userIdSelect.selectedIndex];
+            const pib = selectedOption.getAttribute('data-pib');
+            const pos = selectedOption.getAttribute('data-pos');
+
+            // Оновлюємо UI індивідуальними даними
+            displayPib.textContent = pib;
+            userPosition.textContent = pos;
+            requestUserPib.textContent = pib;
+            
+            // Формуємо шаблон тексту запиту
+            roleReasonArea.value = `Я, ${pib}, що займаю посаду "${pos}", прошу надати мені додаткові права доступу для роботи в інформаційних системах ХАЕС.`;
+
+            // Відображаємо ролі саме цього користувача з нашої карти даних
+            const roles = USER_ROLES_MAP[userId] || [];
+            
+            if (roles.length > 0) {
+                userRolesDisplay.innerHTML = roles.map(r => `
+                    <tr>
+                        <td><strong>${r.app}</strong></td>
+                        <td>${r.role}</td>
+                    </tr>
+                `).join('');
+            } else {
+                userRolesDisplay.innerHTML = '<tr><td colspan="2" style="text-align:center;">У даного користувача поки немає призначених ролей.</td></tr>';
+            }
+
+            userInfoBlock.style.display = 'block';
+        }
+
+        function requestRole() {
+            if (!currentUserId) {
+                alert('Будь ласка, спочатку оберіть користувача зі списку.');
+                return;
+            }
+            requestModal.style.display = 'block';
+        }
+
+        function closeModal() {
+            requestModal.style.display = 'none';
+        }
+
+        function submitRoleRequest() {
+            const reason = roleReasonArea.value;
+            alert(`✅ Запит успішно згенеровано!\nКористувач: ${displayPib.textContent}\nСистема: itproger\nДані збережено в БД project2.`);
+            closeModal();
+        }
+    </script>
+</body>
+</html>

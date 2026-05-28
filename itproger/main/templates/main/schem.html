@@ -1,0 +1,32 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Призначення Ролей</title>
+    <meta charset="UTF-8"> 
+    <link rel="stylesheet" href="{% static 'main/data_view.css' %}?v=1.1">
+</head>
+<body>
+    <div class="container">
+        
+                <header class="header">
+            <div class="header-content">
+                <h1>Призначення Ролей Користувачам</h1>
+                <nav class="main-nav">
+                    <ul>
+                        <li><a href="{% url 'role_assignment' %}">Призначення</a></li>
+                        <li><a href="{% url 'page_two' %}">Таблиці</a></li>
+                        <li><a href="{% url 'page_three' %}">Схема</a></li>
+                        <li><a href="{% url 'page_four' %}" class="active">Профіль</a></li> 
+                    </ul>
+                </nav>
+            </div>
+        </header>
+        
+        <div class="main-content">
+            <img src="{% static 'main/images/Actoru.png' %}" alt="Схема або Діаграма" class="main-diagram-img">
+        </div>
+        
+    </div>
+</body>
+</html>

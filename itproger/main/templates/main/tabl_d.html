@@ -1,0 +1,95 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Таблиці</title>
+    <meta charset="UTF-8"> 
+    <link rel="stylesheet" href="{% static 'main/data_view.css' %}?v=1.1">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <h1>Призначення Ролей Користувачам</h1>
+                <nav class="main-nav">
+                    <ul>
+                        <li><a href="{% url 'role_assignment' %}">Призначення</a></li>
+                        <li><a href="{% url 'page_two' %}">Таблиці</a></li>
+                        <li><a href="{% url 'page_three' %}">Схема</a></li>
+                        <li><a href="{% url 'page_four' %}" class="active">Профіль</a></li> 
+                    </ul>
+                </nav>
+            </div>
+        </header>
+
+        <div class="main-form">
+            <h2>📜 Таблиця записів (User_list)</h2>
+
+            <form method="GET" action="{% url 'page_two' %}" class="filters-container">
+                <div class="filter-group filter-checkboxes">
+                    <label>Фільтр по Додатку (Чекбокси):</label>
+                    <div id="app-filter-checkboxes">
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="app_filter" value="ERP_Finance" {% if 'ERP_Finance' in request.GET.app_filter %}checked{% endif %}>
+                            <label>ERP_Finance</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="app_filter" value="CRM_Sales" {% if 'CRM_Sales' in request.GET.app_filter %}checked{% endif %}>
+                            <label>CRM_Sales</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="app_filter" value="HR_Portal" {% if 'HR_Portal' in request.GET.app_filter %}checked{% endif %}>
+                            <label>HR_Portal</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="filter-group filter-text">
+                    <label for="role-filter">Фільтр по Ролі:</label>
+                    <input type="text" name="role_filter" id="role-filter" placeholder="Введіть назву ролі" value="{{ request.GET.role_filter }}">
+                </div>
+
+                <button type="submit" class="filter-button">Застосувати</button>
+                <a href="{% url 'page_two' %}" class="filter-button" style="text-decoration: none; background: #6c757d; display: inline-block; text-align: center;">Скинути</a>
+            </form>
+            
+            <div class="data-table-container">
+                <table class="roles-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 5%;">ID</th>
+                            <th style="width: 20%;">ПІБ Користувача</th>
+                            <th style="width: 15%;">Посада</th>
+                            <th style="width: 30%;">Додаток</th>
+                            <th style="width: 30%;">Ролі</th>
+                        </tr>
+                    </thead>
+                    <tbody id="full-report-tbody">
+                        {% for user_data in report_data %}
+                        <tr>
+                            <td>{{ user_data.id_user }}</td>
+                            <td>{{ user_data.pib }}</td>
+                            <td>{{ user_data.position }}</td>
+                            <td>
+                                {% for role in user_data.roles_data %}
+                                    {{ role.application }}{% if not forloop.last %}<br>{% endif %}
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% for role in user_data.roles_data %}
+                                    {{ role.role_name }}{% if not forloop.last %}<br>{% endif %}
+                                {% endfor %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" style="text-align: center;">За вказаними фільтрами даних не знайдено.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
