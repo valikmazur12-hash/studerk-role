@@ -1,32 +1,15 @@
+{% extends 'main/data_view.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Призначення Ролей</title>
-    <meta charset="UTF-8"> 
-    <link rel="stylesheet" href="{% static 'main/data_view.css' %}?v=1.1">
-</head>
-<body>
-    <div class="container">
-        
-                <header class="header">
-            <div class="header-content">
-                <h1>Призначення Ролей Користувачам</h1>
-                <nav class="main-nav">
-                    <ul>
-                        <li><a href="{% url 'role_assignment' %}">Призначення</a></li>
-                        <li><a href="{% url 'page_two' %}">Таблиці</a></li>
-                        <li><a href="{% url 'page_three' %}">Схема</a></li>
-                        <li><a href="{% url 'page_four' %}" class="active">Профіль</a></li> 
-                    </ul>
-                </nav>
-            </div>
-        </header>
-        
-        <div class="main-content">
-            <img src="{% static 'main/images/Actoru.png' %}" alt="Схема або Діаграма" class="main-diagram-img">
-        </div>
-        
-    </div>
-</body>
-</html>
+
+{% block content %}
+<div class="main-form" style="text-align: center;">
+    <h2>Схема розмежування ролей СІТ</h2>
+    <p style="color: #666; font-size: 14px; margin-bottom: 25px; text-align: center;">
+        Візуальна архітектура розподілу доступу, інженерних груп та пов'язаних додатків ХАЕС.
+    </p>
+    
+    <div style="background: white; padding: 20px; border: 1px solid #e0e0e0; border-radius: 6px; display: inline-block; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+        <img src="{% static 'main/images/Actoru.png' %}" alt="Схема розмежування ролей" style="max-width: 100%; height: auto; border-radius: 4px;">
+    </div>
+</div>
+{% endblock %}

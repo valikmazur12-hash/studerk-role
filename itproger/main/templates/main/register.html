@@ -1,0 +1,46 @@
+{% extends 'main/data_view.html' %}
+
+{% block content %}
+<div class="auth-box">
+    <h2>Реєстрація співробітника СІТ</h2>
+    <p class="auth-subtitle">Створення профілю в електронному архіві</p>
+    
+    <form method="post" class="auth-form">
+        {% csrf_token %}
+        
+        <div class="input-field">
+            <label>Прізвище:</label>
+            <input type="text" name="prizvische" required placeholder="Наприклад: Шевченко">
+        </div>
+        <div class="input-field">
+            <label>Ім'я:</label>
+            <input type="text" name="name" required placeholder="Наприклад: Андрій">
+        </div>
+        <div class="input-field">
+            <label>По батькові:</label>
+            <input type="text" name="father_name" required placeholder="Наприклад: Миколайович">
+        </div>
+        
+        <hr class="auth-divider">
+        <p class="auth-note">Дані для входу на сайт:</p>
+
+        {% for field in form %}
+            <div class="input-field">
+                <label>{{ field.label }}:</label>
+                {{ field }}
+                {% if field.help_text %}
+                    <small class="help-text">{{ field.help_text }}</small>
+                {% endif %}
+                {% for error in field.errors %}
+                    <p class="error-msg">{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endfor %}
+        
+        <button type="submit" class="btn-primary">Зареєструвати профіль</button>
+    </form>
+    <div class="auth-footer">
+        <p>Вже є профіль? <a href="{% url 'login' %}">Увійти</a></p>
+    </div>
+</div>
+{% endblock %}
