@@ -97,3 +97,12 @@ STATICFILES_DIRS = [
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Налаштування пошти
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'valikmazur12@gmail.com'
+# Сюди вставляється "Пароль додатка" від Google (App Password), а не звичайний пароль від пошти:
+EMAIL_HOST_PASSWORD = 'givckwxhgerpmwaq'

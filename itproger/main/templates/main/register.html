@@ -3,7 +3,7 @@
 {% block content %}
 <div class="auth-box">
     <h2>Реєстрація співробітника СІТ</h2>
-    <p class="auth-subtitle">Створення профілю в електронному архіві</p>
+    <p class="auth-subtitle">Створення профілю v електронному архіві</p>
     
     <form method="post" class="auth-form">
         {% csrf_token %}
@@ -19,6 +19,11 @@
         <div class="input-field">
             <label>По батькові:</label>
             <input type="text" name="father_name" required placeholder="Наприклад: Миколайович">
+        </div>
+        
+        <div class="input-field">
+            <label for="custom_id">Ідентифікаційний код додатка:</label>
+            <input type="password" id="custom_id" name="custom_id" required placeholder="Введіть код">
         </div>
         
         <hr class="auth-divider">

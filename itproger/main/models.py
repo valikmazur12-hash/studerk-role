@@ -81,5 +81,5 @@ class UserRole(models.Model):
     id_user = models.ForeignKey(UserList, on_delete=models.CASCADE, db_column='id_user', related_name='userrole_set')
 
     class Meta:
-        db_table = 'User_role'
-        unique_together = (('id_role', 'id_user'),) 
+        db_table = 'User_role'  # Чітке мапування на існуючу таблицю в PostgreSQL
+        unique_together = (('id_role', 'id_user'),)  # Захист від дублікатів (комбінація юзер+роль має бути унікальною)

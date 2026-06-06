@@ -5,6 +5,7 @@ urlpatterns = [
     # Головна сторінка: призначена і для імені 'index', і для імені 'role_assignment'
     path('', views.role_assignment_view, name='index'),
     path('role-assignment/', views.role_assignment_view, name='role_assignment'),
+    path('confirm-role/<str:token>/', views.confirm_role_view, name='confirm_role'),
     
     # Сторінка 2 (Таблиці / Звіти): підтримує обидва імені для зворотної сумісності
     path('tables/', views.page_two_view, name='tables'),

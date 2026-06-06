@@ -1,0 +1,777 @@
+[
+{
+    "model": "main.department",
+    "pk": 1,
+    "fields": {
+        "name_dep": "Служба інформаційних технологій"
+    }
+},
+{
+    "model": "main.dictpos",
+    "pk": 101,
+    "fields": {
+        "name_pos": "Директор департаменту"
+    }
+},
+{
+    "model": "main.dictpos",
+    "pk": 102,
+    "fields": {
+        "name_pos": "Менеджер проекту"
+    }
+},
+{
+    "model": "main.dictpos",
+    "pk": 103,
+    "fields": {
+        "name_pos": "Старший розробник ПЗ"
+    }
+},
+{
+    "model": "main.dictpos",
+    "pk": 104,
+    "fields": {
+        "name_pos": "Системний адміністратор"
+    }
+},
+{
+    "model": "main.dictpos",
+    "pk": 105,
+    "fields": {
+        "name_pos": "Фінансовий аналітик"
+    }
+},
+{
+    "model": "main.dictpos",
+    "pk": 106,
+    "fields": {
+        "name_pos": "Спеціаліст з продажу"
+    }
+},
+{
+    "model": "main.dictpos",
+    "pk": 107,
+    "fields": {
+        "name_pos": "HR-менеджер"
+    }
+},
+{
+    "model": "main.dictpos",
+    "pk": 108,
+    "fields": {
+        "name_pos": "Тестувальник ПЗ"
+    }
+},
+{
+    "model": "main.dictpos",
+    "pk": 109,
+    "fields": {
+        "name_pos": "Фахівець техпідтримки"
+    }
+},
+{
+    "model": "main.dictpos",
+    "pk": 110,
+    "fields": {
+        "name_pos": "Юрист"
+    }
+},
+{
+    "model": "main.dictserv",
+    "pk": 101,
+    "fields": {
+        "domen": "db-main.corp",
+        "discription": "Головний сервер бази даних PostgreSQL",
+        "date_start": "2022-01-15",
+        "date_end": null
+    }
+},
+{
+    "model": "main.dictserv",
+    "pk": 102,
+    "fields": {
+        "domen": "app-web-eu.corp",
+        "discription": "Сервер веб-додатків для Європи",
+        "date_start": "2022-03-01",
+        "date_end": null
+    }
+},
+{
+    "model": "main.dictserv",
+    "pk": 103,
+    "fields": {
+        "domen": "app-web-us.corp",
+        "discription": "Сервер веб-додатків для США",
+        "date_start": "2023-01-20",
+        "date_end": null
+    }
+},
+{
+    "model": "main.dictserv",
+    "pk": 104,
+    "fields": {
+        "domen": "backup-main.corp",
+        "discription": "Основний сервер резервного копіювання",
+        "date_start": "2022-05-20",
+        "date_end": null
+    }
+},
+{
+    "model": "main.dictserv",
+    "pk": 105,
+    "fields": {
+        "domen": "mail-srv.corp",
+        "discription": "Корпоративний поштовий сервер",
+        "date_start": "2021-11-11",
+        "date_end": null
+    }
+},
+{
+    "model": "main.dictserv",
+    "pk": 106,
+    "fields": {
+        "domen": "api-gateway.corp",
+        "discription": "Сервер API-шлюзу",
+        "date_start": "2023-08-01",
+        "date_end": null
+    }
+},
+{
+    "model": "main.dictserv",
+    "pk": 107,
+    "fields": {
+        "domen": "dev-env-01.corp",
+        "discription": "Середовище розробки 1",
+        "date_start": "2024-02-10",
+        "date_end": null
+    }
+},
+{
+    "model": "main.dictserv",
+    "pk": 108,
+    "fields": {
+        "domen": "test-env-02.corp",
+        "discription": "Середовище тестування 2",
+        "date_start": "2024-03-15",
+        "date_end": null
+    }
+},
+{
+    "model": "main.dictserv",
+    "pk": 109,
+    "fields": {
+        "domen": "legacy-srv.corp",
+        "discription": "Застарілий сервер (виведення)",
+        "date_start": "2018-10-01",
+        "date_end": "2024-12-31"
+    }
+},
+{
+    "model": "main.dictserv",
+    "pk": 110,
+    "fields": {
+        "domen": "log-collector.corp",
+        "discription": "Сервер збору та аналізу логів",
+        "date_start": "2023-05-06",
+        "date_end": null
+    }
+},
+{
+    "model": "main.dictapplic",
+    "pk": 101,
+    "fields": {
+        "app_name": "ERP_Finance",
+        "app_type": "Production",
+        "app_disc": "Система фінансового обліку",
+        "data_begin": "2022-04-01",
+        "date_end": null,
+        "id_server": 101
+    }
+},
+{
+    "model": "main.dictapplic",
+    "pk": 102,
+    "fields": {
+        "app_name": "CRM_Sales",
+        "app_type": "Production",
+        "app_disc": "Модуль управління продажами",
+        "data_begin": "2022-06-15",
+        "date_end": null,
+        "id_server": 102
+    }
+},
+{
+    "model": "main.dictapplic",
+    "pk": 103,
+    "fields": {
+        "app_name": "HR_Portal",
+        "app_type": "Internal",
+        "app_disc": "Внутрішній портал управління персоналом",
+        "data_begin": "2023-01-10",
+        "date_end": null,
+        "id_server": 103
+    }
+},
+{
+    "model": "main.dictapplic",
+    "pk": 104,
+    "fields": {
+        "app_name": "Analytics_DB",
+        "app_type": "Reporting",
+        "app_disc": "База даних для бізнес-аналітики",
+        "data_begin": "2023-05-01",
+        "date_end": null,
+        "id_server": 101
+    }
+},
+{
+    "model": "main.dictapplic",
+    "pk": 105,
+    "fields": {
+        "app_name": "Email_Mgmt",
+        "app_type": "Production",
+        "app_disc": "Система управління електронною поштою",
+        "data_begin": "2021-11-11",
+        "date_end": null,
+        "id_server": 105
+    }
+},
+{
+    "model": "main.dictapplic",
+    "pk": 106,
+    "fields": {
+        "app_name": "Product_Catalog",
+        "app_type": "Production",
+        "app_disc": "Додаток для керування каталогом продукції",
+        "data_begin": "2023-09-20",
+        "date_end": null,
+        "id_server": 103
+    }
+},
+{
+    "model": "main.dictapplic",
+    "pk": 107,
+    "fields": {
+        "app_name": "Task_Tracker",
+        "app_type": "Internal",
+        "app_disc": "Система відстеження завдань та проектів",
+        "data_begin": "2024-01-05",
+        "date_end": null,
+        "id_server": 107
+    }
+},
+{
+    "model": "main.dictapplic",
+    "pk": 108,
+    "fields": {
+        "app_name": "Support_Desk",
+        "app_type": "Production",
+        "app_disc": "Система обслуговування клієнтів",
+        "data_begin": "2022-10-10",
+        "date_end": null,
+        "id_server": 102
+    }
+},
+{
+    "model": "main.dictapplic",
+    "pk": 109,
+    "fields": {
+        "app_name": "API_Core",
+        "app_type": "Internal",
+        "app_disc": "Основний внутрішній API-сервіс",
+        "data_begin": "2023-08-01",
+        "date_end": null,
+        "id_server": 106
+    }
+},
+{
+    "model": "main.dictapplic",
+    "pk": 110,
+    "fields": {
+        "app_name": "Billing_System",
+        "app_type": "Production",
+        "app_disc": "Система виставлення рахунків",
+        "data_begin": "2024-04-12",
+        "date_end": null,
+        "id_server": 104
+    }
+},
+{
+    "model": "main.groupd",
+    "pk": 1,
+    "fields": {
+        "name": "Загальна група доступу СІТ",
+        "id_app": 101,
+        "opption": 1
+    }
+},
+{
+    "model": "main.groupd",
+    "pk": 10,
+    "fields": {
+        "name": "Admin_Fin",
+        "id_app": 101,
+        "opption": 1
+    }
+},
+{
+    "model": "main.groupd",
+    "pk": 20,
+    "fields": {
+        "name": "Sales_Users",
+        "id_app": 102,
+        "opption": 1
+    }
+},
+{
+    "model": "main.groupd",
+    "pk": 30,
+    "fields": {
+        "name": "HR_Staff",
+        "id_app": 103,
+        "opption": 1
+    }
+},
+{
+    "model": "main.groupd",
+    "pk": 40,
+    "fields": {
+        "name": "Analytics_Team",
+        "id_app": 104,
+        "opption": 0
+    }
+},
+{
+    "model": "main.groupd",
+    "pk": 50,
+    "fields": {
+        "name": "Email_Admins",
+        "id_app": 105,
+        "opption": 1
+    }
+},
+{
+    "model": "main.groupd",
+    "pk": 60,
+    "fields": {
+        "name": "Catalog_Editors",
+        "id_app": 106,
+        "opption": 0
+    }
+},
+{
+    "model": "main.groupd",
+    "pk": 70,
+    "fields": {
+        "name": "Task_Project_M",
+        "id_app": 107,
+        "opption": 1
+    }
+},
+{
+    "model": "main.groupd",
+    "pk": 80,
+    "fields": {
+        "name": "Support_Tier1",
+        "id_app": 108,
+        "opption": 0
+    }
+},
+{
+    "model": "main.groupd",
+    "pk": 90,
+    "fields": {
+        "name": "API_Consumers",
+        "id_app": 109,
+        "opption": 0
+    }
+},
+{
+    "model": "main.groupd",
+    "pk": 100,
+    "fields": {
+        "name": "Billing_Access",
+        "id_app": 110,
+        "opption": 1
+    }
+},
+{
+    "model": "main.groupd",
+    "pk": 110,
+    "fields": {
+        "name": "Global_Managers",
+        "id_app": 101,
+        "opption": 0
+    }
+},
+{
+    "model": "main.roled",
+    "pk": 1,
+    "fields": {
+        "name": "Адміністратор безпеки СКБД (PostgreSQL)",
+        "discription": null,
+        "id_group": 1,
+        "date_begin": "2026-06-05",
+        "date_end": null
+    }
+},
+{
+    "model": "main.roled",
+    "pk": 2,
+    "fields": {
+        "name": "Інженер-аудитор matrix-доступу СІТ",
+        "discription": null,
+        "id_group": 1,
+        "date_begin": "2026-06-05",
+        "date_end": null
+    }
+},
+{
+    "model": "main.roled",
+    "pk": 3,
+    "fields": {
+        "name": "Адміністратор технологічних серверів та хмарних платформ",
+        "discription": null,
+        "id_group": 1,
+        "date_begin": "2026-06-05",
+        "date_end": null
+    }
+},
+{
+    "model": "main.roled",
+    "pk": 4,
+    "fields": {
+        "name": "Оператор обліку актів архівної документації",
+        "discription": null,
+        "id_group": 1,
+        "date_begin": "2026-06-05",
+        "date_end": null
+    }
+},
+{
+    "model": "main.roled",
+    "pk": 5,
+    "fields": {
+        "name": "Провідний інженер з супроводу вебсистем",
+        "discription": null,
+        "id_group": 1,
+        "date_begin": "2026-06-05",
+        "date_end": null
+    }
+},
+{
+    "model": "main.roled",
+    "pk": 6,
+    "fields": {
+        "name": "Молодший фахівець технічної підтримки користувачів",
+        "discription": null,
+        "id_group": 1,
+        "date_begin": "2026-06-05",
+        "date_end": null
+    }
+},
+{
+    "model": "main.roled",
+    "pk": 110,
+    "fields": {
+        "name": "Fin_Full_Access",
+        "discription": "Повний доступ до фінансових операцій",
+        "id_group": 10,
+        "date_begin": "2022-04-01",
+        "date_end": null
+    }
+},
+{
+    "model": "main.roled",
+    "pk": 120,
+    "fields": {
+        "name": "Fin_View_Only",
+        "discription": "Тільки перегляд фінансових звітів",
+        "id_group": 10,
+        "date_begin": "2022-04-01",
+        "date_end": null
+    }
+},
+{
+    "model": "main.roled",
+    "pk": 130,
+    "fields": {
+        "name": "Sales_Editor",
+        "discription": "Редагування угод та клієнтів в CRM",
+        "id_group": 20,
+        "date_begin": "2022-06-15",
+        "date_end": null
+    }
+},
+{
+    "model": "main.roled",
+    "pk": 140,
+    "fields": {
+        "name": "HR_Reader",
+        "discription": "Перегляд даних персоналу",
+        "id_group": 30,
+        "date_begin": "2023-01-10",
+        "date_end": null
+    }
+},
+{
+    "model": "main.roled",
+    "pk": 150,
+    "fields": {
+        "name": "HR_Approver",
+        "discription": "Затвердження відпусток та змін",
+        "id_group": 30,
+        "date_begin": "2023-01-10",
+        "date_end": null
+    }
+},
+{
+    "model": "main.roled",
+    "pk": 160,
+    "fields": {
+        "name": "Analyst_Query",
+        "discription": "Виконання запитів до БД Аналітики",
+        "id_group": 40,
+        "date_begin": "2023-05-01",
+        "date_end": null
+    }
+},
+{
+    "model": "main.roled",
+    "pk": 170,
+    "fields": {
+        "name": "Mail_Maintenance",
+        "discription": "Обслуговування поштових скриньок",
+        "id_group": 50,
+        "date_begin": "2021-11-11",
+        "date_end": null
+    }
+},
+{
+    "model": "main.roled",
+    "pk": 180,
+    "fields": {
+        "name": "Catalog_Updater",
+        "discription": "Оновлення цін та описів товарів",
+        "id_group": 60,
+        "date_begin": "2023-09-20",
+        "date_end": null
+    }
+},
+{
+    "model": "main.roled",
+    "pk": 190,
+    "fields": {
+        "name": "Project_Owner",
+        "discription": "Створення та управління проектами",
+        "id_group": 70,
+        "date_begin": "2024-01-05",
+        "date_end": null
+    }
+},
+{
+    "model": "main.roled",
+    "pk": 200,
+    "fields": {
+        "name": "Support_Responder",
+        "discription": "Відповідь на запити першої лінії",
+        "id_group": 80,
+        "date_begin": "2022-10-10",
+        "date_end": null
+    }
+},
+{
+    "model": "main.roled",
+    "pk": 210,
+    "fields": {
+        "name": "Global_Read",
+        "discription": "Перегляд усіх основних звітів",
+        "id_group": 110,
+        "date_begin": "2024-05-15",
+        "date_end": null
+    }
+},
+{
+    "model": "main.userlist",
+    "pk": 101,
+    "fields": {
+        "id_pos": 101,
+        "id_dep": 1,
+        "auth_user": null,
+        "prizvische": "Шевченко",
+        "name": "Андрій",
+        "father_name": "Петрович",
+        "date_begin": "2021-12-01",
+        "date_end": null
+    }
+},
+{
+    "model": "main.userlist",
+    "pk": 102,
+    "fields": {
+        "id_pos": 102,
+        "id_dep": 1,
+        "auth_user": null,
+        "prizvische": "Ковальчук",
+        "name": "Олена",
+        "father_name": "Іванівна",
+        "date_begin": "2022-02-10",
+        "date_end": null
+    }
+},
+{
+    "model": "main.userlist",
+    "pk": 103,
+    "fields": {
+        "id_pos": 103,
+        "id_dep": 1,
+        "auth_user": null,
+        "prizvische": "Бондаренко",
+        "name": "Сергій",
+        "father_name": "Миколайович",
+        "date_begin": "2023-06-20",
+        "date_end": null
+    }
+},
+{
+    "model": "main.userlist",
+    "pk": 104,
+    "fields": {
+        "id_pos": 104,
+        "id_dep": 1,
+        "auth_user": null,
+        "prizvische": "Мельник",
+        "name": "Ігор",
+        "father_name": "Олександрович",
+        "date_begin": "2022-08-01",
+        "date_end": null
+    }
+},
+{
+    "model": "main.userlist",
+    "pk": 105,
+    "fields": {
+        "id_pos": 105,
+        "id_dep": 1,
+        "auth_user": null,
+        "prizvische": "Лисенко",
+        "name": "Наталія",
+        "father_name": "Володимирівна",
+        "date_begin": "2023-01-15",
+        "date_end": null
+    }
+},
+{
+    "model": "main.userlist",
+    "pk": 106,
+    "fields": {
+        "id_pos": 106,
+        "id_dep": 1,
+        "auth_user": null,
+        "prizvische": "Петренко",
+        "name": "Віктор",
+        "father_name": "Юрійович",
+        "date_begin": "2022-09-05",
+        "date_end": null
+    }
+},
+{
+    "model": "main.userlist",
+    "pk": 107,
+    "fields": {
+        "id_pos": 107,
+        "id_dep": 1,
+        "auth_user": null,
+        "prizvische": "Савчук",
+        "name": "Марина",
+        "father_name": "Василівна",
+        "date_begin": "2023-04-18",
+        "date_end": null
+    }
+},
+{
+    "model": "main.userlist",
+    "pk": 108,
+    "fields": {
+        "id_pos": 108,
+        "id_dep": 1,
+        "auth_user": null,
+        "prizvische": "Мороз",
+        "name": "Тарас",
+        "father_name": "Степанович",
+        "date_begin": "2024-01-25",
+        "date_end": null
+    }
+},
+{
+    "model": "main.userlist",
+    "pk": 109,
+    "fields": {
+        "id_pos": 109,
+        "id_dep": 1,
+        "auth_user": null,
+        "prizvische": "Клименко",
+        "name": "Дар’я",
+        "father_name": "Анатоліївна",
+        "date_begin": "2023-10-10",
+        "date_end": null
+    }
+},
+{
+    "model": "main.userlist",
+    "pk": 110,
+    "fields": {
+        "id_pos": 103,
+        "id_dep": 1,
+        "auth_user": null,
+        "prizvische": "Іванов",
+        "name": "Олександр",
+        "father_name": "Віталійович",
+        "date_begin": "2024-05-01",
+        "date_end": null
+    }
+},
+{
+    "model": "main.userlist",
+    "pk": 111,
+    "fields": {
+        "id_pos": 106,
+        "id_dep": 1,
+        "auth_user": null,
+        "prizvische": "Соловйова",
+        "name": "Катерина",
+        "father_name": "Борисівна",
+        "date_begin": "2023-11-20",
+        "date_end": null
+    }
+},
+{
+    "model": "main.userlist",
+    "pk": 112,
+    "fields": {
+        "id_pos": 110,
+        "id_dep": 1,
+        "auth_user": null,
+        "prizvische": "Вовк",
+        "name": "Дмитро",
+        "father_name": "Романович",
+        "date_begin": "2022-07-07",
+        "date_end": null
+    }
+},
+{
+    "model": "main.userlist",
+    "pk": 210,
+    "fields": {
+        "id_pos": 101,
+        "id_dep": 1,
+        "auth_user": [
+            "valik"
+        ],
+        "prizvische": "Мазур",
+        "name": "Валентин",
+        "father_name": "Дмитрович",
+        "date_begin": "2026-06-05",
+        "date_end": null
+    }
+}
