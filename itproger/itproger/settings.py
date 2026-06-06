@@ -1,6 +1,18 @@
 import os
+import socket
 from pathlib import Path
 import dj_database_url
+
+# ====================================================================
+# 🚀 СУПЕР-ХАК ДЛЯ RENDER: Примусово переводимо Gmail SMTP на IPv4
+# ====================================================================
+_orig_getaddrinfo = socket.getaddrinfo
+def _patched_getaddrinfo(host, port, family=0, *args, **kwargs):
+    if host == 'smtp.gmail.com':
+        family = socket.AF_INET  # Жорстко фіксуємо IPv4 (запобігає помилці Network is unreachable)
+    return _orig_getaddrinfo(host, port, family, *args, **kwargs)
+socket.getaddrinfo = _patched_getaddrinfo
+# ====================================================================
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -36,7 +48,6 @@ ROOT_URLCONF = 'itproger.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        # ДОДАЙ ОЦЕЙ РЯДОК НАВПРОТИ DIRS:
         'DIRS': [BASE_DIR / 'main' / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -98,12 +109,15 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Налаштування пошти
+# ====================================================================
+# Налаштування пошти Служби ІТ
+# ====================================================================
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'valikmazur12@gmail.com'
-# Сюди вставляється "Пароль додатка" від Google (App Password), а не звичайний пароль від пошти:
-EMAIL_HOST_PASSWORD = 'givckwxhgerpmwaq'
+
+# Безпечно зчитуємо секретний токен з Render (Environment), а якщо його там немає — використовуємо поточний як резервний
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', 'givckwxhgerpmwaq')
 EMAIL_TIMEOUT = 7
