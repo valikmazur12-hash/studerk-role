@@ -106,7 +106,7 @@ def logout_view(request):
 
 @login_required(login_url='login')
 def role_assignment_view(request):
-    """ ФУНКЦІЯ 1: ГОЛОВНА СТОРІНКА - Тільки генерує токен та надсилає лист + дублює лінк в логи """
+    """ ФУНКЦІЯ 1: Тільки генерує токен, виводить лінк у логи та запускає фонову пошту """
     
     if request.method == 'POST':
         user_id = request.POST.get('id_user') or request.POST.get('user') or request.POST.get('user_id')
@@ -117,7 +117,7 @@ def role_assignment_view(request):
                 user_obj = UserList.objects.get(pk=user_id)
                 role_obj = RoleD.objects.get(pk=role_id)
                 
-                # Попередня перевірка: чи немає такої ролі вже в базі
+                # 1. ТІЛЬКИ ПЕРЕВІРКА: Чи немає такої ролі вже в базі (запит SELECT)
                 with connection.cursor() as cursor:
                     try:
                         cursor.execute('SELECT 1 FROM "User_role" WHERE id_user = %s AND id_role = %s', [user_id, role_id])
@@ -130,12 +130,12 @@ def role_assignment_view(request):
                     messages.warning(request, f'Співробітник {user_obj.prizvische} вже має роль "{role_obj.name}".')
                     return redirect('index')
 
-                # Створюємо захищений тимчасовий токен
+                # 2. ГЕНЕРАЦІЯ ТОКЕНА ТА ПОСИЛАННЯ
                 signer = Signer()
                 token = signer.sign(f"{user_id}:{role_id}")
                 confirm_link = request.build_absolute_uri(f"/confirm-role/{token}/")
                 
-                # 🚀 ЛАЙФХАК ДЛЯ ЗАХИСТУ: Виводимо лінк у логи Render ПЕРЕД відправкою пошти
+                # 3. ВИВЕДЕННЯ ЛІНКА В КОНСОЛЬ ДЛЯ АДМІНІСТРАТОРА СІТ
                 print("\n" + "!"*70)
                 print(f"🔐 СИСТЕМА БЕЗПЕКИ STUDERK — СГЕНЕРОВАНО ТОКЕН ДОСТУПУ:")
                 print(f"Співробітник: {user_obj.prizvische} {user_obj.name} (ID: {user_obj.id_user})")
@@ -144,38 +144,33 @@ def role_assignment_view(request):
                 print(f"{confirm_link}")
                 print("!"*70 + "\n")
 
-                # Текст листа для пошти
+                # Текст листа
                 subject = '🔐 STUDERK: Запит на підтвердження матричної ролі'
-                message = (
-                    f"У системи розмежування ролей STUDERK сформовано запит на нові права доступу.\n\n"
-                    f"Співробітник: {user_obj.prizvische} {user_obj.name}\n"
-                    f"Матрична роль: {role_obj.name}\n\n"
-                    f"👉 ДЛЯ ПІДТВЕРДИТИ ПРИЗНАЧЕННЯ КЛІКНІТЬ ТУТ:\n"
-                    f"{confirm_link}"
-                )
+                message = f"У системі STUDERK сформовано запит на права. Для активації клікніть тут:\n{confirm_link}"
 
+                # Фоновий потік для SMTP
                 def send_email_bg(sub, msg, from_mail, to_mail):
                     try:
                         send_mail(sub, msg, from_mail, to_mail, fail_silently=False)
-                        print(f"✅ Фоновий лист для {user_obj.prizvische} успішно доставлено на SMTP!")
+                        print(f"✅ Фоновий лист успішно віддано на SMTP!")
                     except Exception as mail_err:
-                        print(f"⚠️ Пошта не пробилася через хмару Render, використовуйте лінк з логів вище. Помилка: {mail_err}")
+                        print(f"⚠️ SMTP блокується хмарою, використовуйте лінк з логів. Помилка: {mail_err}")
 
-                # Запуск фонового процесу відправки
                 thread = threading.Thread(target=send_email_bg, args=(subject, message, settings.EMAIL_HOST_USER, ['valikmazur12@gmail.com']))
                 thread.daemon = True
                 thread.start()
 
-                messages.success(request, f'Запит для {user_obj.prizvische} успішно сформовано! Перевірте пошту або лог моніторингу для активації.')
+                # 🔥 ЗВЕРНИ УВАГУ: Ми просто виводимо плашку, в БАЗУ дані ще НЕ увійшли!
+                messages.success(request, f'Запит для {user_obj.prizvische} сформовано! Активація відбудеться ТІЛЬКИ після переходу за посиланням.')
                 
             except Exception as e:
                 messages.error(request, f'Помилка обробки запиту: {e}')
         else:
-            messages.error(request, 'Помилка: Форма не передала ID користувача або ролі.')
+            messages.error(request, 'Помилка: Форма не передала ID.')
                 
         return redirect('index')
 
-    # GET логіка автозаповнення форми
+    # GET логіка (без змін)
     user_data = UserList.objects.select_related('id_pos').all()
     user_list_json = [
         {
@@ -191,12 +186,11 @@ def role_assignment_view(request):
     return render(request, 'main/data_view.html', context)
 
 
-# 🚀 НОВА ФУНКЦІЯ: Обробляє клік із листа і тільки тепер робить запис у PostgreSQL
 def confirm_role_view(request, token):
-    """ Контролер, який активується ТІЛЬКИ при переході за посиланням з листа """
+    """ ФУНКЦІЯ 2: ОСТАНОВЧИЙ ЗАПИС В БАЗУ — Спрацьовує ТІЛЬКИ при переході за лінком """
     signer = Signer()
     try:
-        # Розшифровуємо секретний токен назад у ID юзера та ролі
+        # Розшифровуємо токен
         data = signer.unsign(token)
         user_id, role_id = data.split(':')
         
@@ -204,8 +198,8 @@ def confirm_role_view(request, token):
         role_obj = RoleD.objects.get(pk=role_id)
         
         created = False
-        # Використовуємо наш Raw SQL хак, оскільки в User_role немає стовпця 'id'
         with connection.cursor() as cursor:
+            # Перевірка на дублікат перед записом
             try:
                 cursor.execute('SELECT 1 FROM "User_role" WHERE id_user = %s AND id_role = %s', [user_id, role_id])
                 exists = cursor.fetchone()
@@ -213,6 +207,7 @@ def confirm_role_view(request, token):
                 cursor.execute('SELECT 1 FROM user_role WHERE id_user = %s AND id_role = %s', [user_id, role_id])
                 exists = cursor.fetchone()
                 
+            # 🚀 ОЦЕ ЄДИНЕ МІСЦЕ, ЯКЕ МАЄ ПРАВО ДОДАВАТИ РОЛЬ В БАЗУ ТАБЛИЦІ User_role:
             if not exists:
                 try:
                     cursor.execute('INSERT INTO "User_role" (id_user, id_role) VALUES (%s, %s)', [user_id, role_id])
@@ -221,14 +216,14 @@ def confirm_role_view(request, token):
                 created = True
         
         if created:
-            messages.success(request, f'🎉 Авторизація успішна! Роль "{role_obj.name}" офіційно активована для {user_obj.prizvische}.')
+            messages.success(request, f'🎉 Роль "{role_obj.name}" успішно активована для {user_obj.prizvische} через систему підтвердження токенів!')
         else:
-            messages.warning(request, f'Цей співробітник вже отримав роль "{role_obj.name}" раніше.')
+            messages.warning(request, f'Цей співробітник вже має роль "{role_obj.name}".')
             
     except BadSignature:
-        messages.error(request, 'Помилка безпеки: Посилання підроблене, недійсне або його термін дії закінчився!')
+        messages.error(request, 'Критична помилка безпеки: Токен підроблений або недійсний!')
     except Exception as e:
-        messages.error(request, f'Критична помилка активації права: {e}')
+        messages.error(request, f'Помилка активації: {e}')
         
     return redirect('index')
 
