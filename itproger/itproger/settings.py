@@ -121,4 +121,4 @@ EMAIL_TIMEOUT = 10
 EMAIL_HOST_USER = 'valikmazur12@gmail.com'
 
 # Безпечно зчитуємо секретний токен з Render (Environment), а якщо його там немає — використовуємо поточний як резервний
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', 'kfzrsjwninchjlze')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', 'ayinywwmbbryawdp')
