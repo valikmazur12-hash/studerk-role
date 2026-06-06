@@ -106,7 +106,7 @@ def logout_view(request):
 
 @login_required(login_url='login')
 def role_assignment_view(request):
-    """ ФУНКЦІЯ 1: ГОЛОВНА СТОРІНКА - Генерує токен та надсилає лист у фоновому потоці (без таймаутів) """
+    """ ФУНКЦІЯ 1: ГОЛОВНА СТОРІНКА - Тільки генерує токен та надсилає лист + дублює лінк в логи """
     
     if request.method == 'POST':
         user_id = request.POST.get('id_user') or request.POST.get('user') or request.POST.get('user_id')
@@ -135,38 +135,38 @@ def role_assignment_view(request):
                 token = signer.sign(f"{user_id}:{role_id}")
                 confirm_link = request.build_absolute_uri(f"/confirm-role/{token}/")
                 
-                # Текст листа
+                # 🚀 ЛАЙФХАК ДЛЯ ЗАХИСТУ: Виводимо лінк у логи Render ПЕРЕД відправкою пошти
+                print("\n" + "!"*70)
+                print(f"🔐 СИСТЕМА БЕЗПЕКИ STUDERK — СГЕНЕРОВАНО ТОКЕН ДОСТУПУ:")
+                print(f"Співробітник: {user_obj.prizvische} {user_obj.name} (ID: {user_obj.id_user})")
+                print(f"Роль для активації: {role_obj.name}")
+                print(f"👉 ПРЯМЕ ПОСИЛАННЯ ДЛЯ АКТИВАЦІЇ В БАЗІ ХАЕС:")
+                print(f"{confirm_link}")
+                print("!"*70 + "\n")
+
+                # Текст листа для пошти
                 subject = '🔐 STUDERK: Запит на підтвердження матричної ролі'
                 message = (
-                    f"У системі розмежування ролей STUDERK сформовано запит на нові права доступу.\n\n"
-                    f"Співробітник: {user_obj.prizvische} {user_obj.name} (ID: {user_obj.id_user})\n"
-                    f"Посада підрозділу: {user_obj.id_pos.name_pos if user_obj.id_pos else 'Не вказано'}\n"
+                    f"У системи розмежування ролей STUDERK сформовано запит на нові права доступу.\n\n"
+                    f"Співробітник: {user_obj.prizvische} {user_obj.name}\n"
                     f"Матрична роль: {role_obj.name}\n\n"
-                    f"👉 ЩОБ ПІДТВЕРДИТИ ПРИЗНАЧЕННЯ ТА ВНЕСТИ ДАНІ В БАЗУ, КЛІКНІТЬ ЗА ПОСИЛАННЯМ:\n"
-                    f"{confirm_link}\n\n"
-                    f"Якщо ви не здійснювали цю дію на сайті, просто проігноруйте цей лист."
+                    f"👉 ДЛЯ ПІДТВЕРДИТИ ПРИЗНАЧЕННЯ КЛІКНІТЬ ТУТ:\n"
+                    f"{confirm_link}"
                 )
 
-                # 🚀 ВНУТРІШНЯ ФУНКЦІЯ ДЛЯ ФОНОВОГО ПОТОКУ
                 def send_email_bg(sub, msg, from_mail, to_mail):
                     try:
                         send_mail(sub, msg, from_mail, to_mail, fail_silently=False)
-                        print(f"✅ Фоновий лист для {user_obj.prizvische} успішно надіслано через SMTP!")
+                        print(f"✅ Фоновий лист для {user_obj.prizvische} успішно доставлено на SMTP!")
                     except Exception as mail_err:
-                        # Помилка запишеться в логи Render, але користувач на сайті її не побачить і сайт не впаде
-                        print(f"!!! Помилка фонової відправки пошти: {mail_err}")
+                        print(f"⚠️ Пошта не пробилася через хмару Render, використовуйте лінк з логів вище. Помилка: {mail_err}")
 
-                # 🚀 ЗАПУСКАЄМО ПАРАЛЕЛЬНИЙ ПОТІК (Thread)
-                # Код нижче виконається миттєво, а відправка листа піде «своєю дорогою» паралельно
-                thread = threading.Thread(
-                    target=send_email_bg, 
-                    args=(subject, message, settings.EMAIL_HOST_USER, ['valikmazur12@gmail.com'])
-                )
-                thread.daemon = True  # Дозволяємо потоку працювати незалежно
+                # Запуск фонового процесу відправки
+                thread = threading.Thread(target=send_email_bg, args=(subject, message, settings.EMAIL_HOST_USER, ['valikmazur12@gmail.com']))
+                thread.daemon = True
                 thread.start()
 
-                # Миттєво повертаємо успіх на екран користувачу
-                messages.success(request, f'Запит для {user_obj.prizvische} успішно сформовано! Перевірте пошту valikmazur12@gmail.com для активації.')
+                messages.success(request, f'Запит для {user_obj.prizvische} успішно сформовано! Перевірте пошту або лог моніторингу для активації.')
                 
             except Exception as e:
                 messages.error(request, f'Помилка обробки запиту: {e}')
@@ -175,7 +175,7 @@ def role_assignment_view(request):
                 
         return redirect('index')
 
-    # GET логіка автозаповнення (без змін)
+    # GET логіка автозаповнення форми
     user_data = UserList.objects.select_related('id_pos').all()
     user_list_json = [
         {
