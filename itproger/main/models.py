@@ -59,7 +59,7 @@ class RoleD(models.Model):
 
 class UserList(models.Model):
     id_user = models.AutoField(primary_key=True)
-    id_pos = models.ForeignKey(DictPos, on_delete=models.PROTECT, db_column='id_pos')
+    id_pos = models.ForeignKey(DictPos, on_delete=models.SET_NULL, db_column='id_pos', null=True, blank=True)
     id_dep = models.ForeignKey(Department, on_delete=models.PROTECT, db_column='id_dep', default=1)
     
     # Зв'язок 1-до-1, який ми щойно налаштували в pgAdmin через auth_user_id
