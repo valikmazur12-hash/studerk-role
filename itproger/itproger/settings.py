@@ -106,3 +106,4 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'valikmazur12@gmail.com'
 # Сюди вставляється "Пароль додатка" від Google (App Password), а не звичайний пароль від пошти:
 EMAIL_HOST_PASSWORD = 'givckwxhgerpmwaq'
+EMAIL_TIMEOUT = 7

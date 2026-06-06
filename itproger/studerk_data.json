@@ -774,4 +774,36 @@
         "date_begin": "2026-06-05",
         "date_end": null
     }
+},
+{
+    "model": "main.userlist",
+    "pk": 310,
+    "fields": {
+        "id_pos": 103,
+        "id_dep": 1,
+        "auth_user": [
+            "pop_cit"
+        ],
+        "prizvische": "Попович",
+        "name": "Андрій",
+        "father_name": "Сергійович",
+        "date_begin": "2026-06-05",
+        "date_end": null
+    }
+},
+{
+    "model": "main.userlist",
+    "pk": 221223,
+    "fields": {
+        "id_pos": 101,
+        "id_dep": 1,
+        "auth_user": [
+            "dim_cit"
+        ],
+        "prizvische": "Дмитриєнко",
+        "name": "Артем",
+        "father_name": "Макарович",
+        "date_begin": "2026-06-05",
+        "date_end": null
+    }
 }
